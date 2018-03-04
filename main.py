@@ -4,18 +4,18 @@ from pprint import pprint
 
 from requests_oauthlib import OAuth1Session
 
-auth_file = open("app_details", "r")
-auth_str = auth_file.readline().split(";")
+auth_file = open('app_details', 'r')
+auth_str = auth_file.readline().split(';')
 print(auth_str[1])
 
 def print_names(json):
-    for i in range(0, len(json["article"])):
-        print( i, json["article"][i]["product"]["enName"])
+    for i in range(0, len(json['article'])):
+        print( i, json['article'][i]['product']['enName'])
 
 def sum_offer_prizes(json):
     sum = 0
-    for i in range(0, len(json["article"])):
-        sum += json["article"][i]["price"] * json["article"][i]["count"]
+    for i in range(0, len(json['article'])):
+        sum += json['article'][i]['price'] * json['article'][i]['count']
     return sum
 
 def sum_sold_cards_prizes(json):
@@ -58,4 +58,4 @@ else:
 #pprint (order_resp.json()) #["article"][0]["product"]
 
 #print_names(resp.json())
-print ("Current Stock value: ", sum_offer_prizes(stock_resp.json()))
+print ('Current Stock value: ', sum_offer_prizes(stock_resp.json()))
