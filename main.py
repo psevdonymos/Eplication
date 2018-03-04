@@ -6,7 +6,6 @@ from requests_oauthlib import OAuth1Session
 
 auth_file = open('app_details', 'r')
 auth_str = auth_file.readline().split(';')
-print(auth_str[1])
 
 def print_names(json):
     for i in range(0, len(json['article'])):
@@ -24,7 +23,6 @@ def sum_sold_cards_prizes(json):
 
 url = 'https://api.cardmarket.com/ws/v2.0/output.json/'
 stock_url = 'https://api.cardmarket.com/ws/v2.0/output.json/stock'
-# TODO fix error 206
 order_url = 'https://api.cardmarket.com/ws/v2.0/output.json/orders/seller/received/80'
 
 stock_session = OAuth1Session(auth_str[0],
@@ -35,10 +33,7 @@ stock_session = OAuth1Session(auth_str[0],
 
 stock_resp = stock_session.get(stock_url)
 if (stock_resp.status_code != 200):
-    # This means something went wrong.
-    #raise ApiError('GET /tasks/ {}'.format(resp.status_code))
     print('ERROR Stock', stock_resp.status_code)
-    #exit()
 
 order_session = OAuth1Session(auth_str[0],
                          client_secret=auth_str[1],
@@ -47,15 +42,14 @@ order_session = OAuth1Session(auth_str[0],
                          realm = order_url)
 
 order_resp = order_session.get(order_url)
-if (order_resp.status_code != 200):
-    # This means something went wrong.
-    #raise ApiError('GET /tasks/ {}'.format(resp.status_code))
+if (order_resp.status_code < 199) or (order_resp.status_code > 227):
+    #TODO implement proper error handling
     print('ERROR Order', order_resp.status_code)
 else:
-    with open('/data/orders/all.txt', 'w') as outfile:
-        json.dump(order_resp, outfile)
-
-#pprint (order_resp.json()) #["article"][0]["product"]
+    #print('Order Response Status Code', order_resp.status_code)
+    print(order_resp.json()['order'][0])
+    with open('data/orders/all.txt', 'w') as outfile:
+        json.dump(order_resp.json(), outfile)
 
 #print_names(resp.json())
 print ('Current Stock value: ', sum_offer_prizes(stock_resp.json()))
